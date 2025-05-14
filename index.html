@@ -38,21 +38,7 @@
       }
     }
 
-    function renderTable() {
-      tbody.innerHTML = "";
-      data.forEach((entry, index) => {
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-          <td>${index + 1}</td>
-          <td contenteditable="false">${entry.name}</td>
-          <td contenteditable="false">${entry.points}</td>
-          <td contenteditable="false">${entry.lastUpdate}</td>
-        `;
-
-        tbody.appendChild(row);
-      });
-    }
+function renderTable() {
 
     function enableAdminMode() {
       document.querySelectorAll("td[contenteditable]").forEach(cell => {
