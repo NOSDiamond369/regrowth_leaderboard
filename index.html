@@ -39,6 +39,30 @@
     }
 
 function renderTable() {
+  tbody.innerHTML = "";
+
+  // 🧠 Sort: points DESC, then name ASC
+  data.sort((a, b) => {
+    if (b.points !== a.points) {
+      return b.points - a.points;
+    }
+    return a.name.localeCompare(b.name);
+  });
+
+  data.forEach((entry, index) => {
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td contenteditable="false">${entry.name}</td>
+      <td contenteditable="false">${entry.points}</td>
+      <td contenteditable="false">${entry.lastUpdate}</td>
+    `;
+
+    tbody.appendChild(row);
+  });
+}
+
 
     function enableAdminMode() {
       document.querySelectorAll("td[contenteditable]").forEach(cell => {
