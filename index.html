@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Great Regrowth Leaderboard</title>
+  <link rel="stylesheet" href="regrowth.css" />
+</head>
+<body>
+  <h1>The Great Regrowth</h1>
+  <p>Guild Contribution Leaderboard</p>
+  <table id="leaderboard">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Player</th>
+        <th>Points</th>
+        <th>Last Update</th>
+      </tr>
+    </thead>
+    <tbody id="leaderboard-body"></tbody>
+  </table>
+  <button class="admin-button" id="exportBtn">Export JSON</button>
+
+  <script>
+    let data = [];
+
+    const tbody = document.getElementById("leaderboard-body");
+    const exportBtn = document.getElementById("exportBtn");
+
+    async function loadData() {
+      try {
+        const response = await fetch('regrowth-points.json');
+        data = await response.json();
+        renderTable();
+      } catch (error) {
+        console.error("Failed to load data:", error);
+      }
+    }
+
+    function renderTable() {
+      tbody.innerHTML = "";
+      data.forEach((entry, index) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td contenteditable="false">${entry.name}</td>
+          <td contenteditable="false">${entry.points}</td>
+          <td contenteditable="false">${entry.lastUpdate}</td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    }
+
+    function enableAdminMode() {
+      document.querySelectorAll("td[contenteditable]").forEach(cell => {
+        cell.setAttribute("contenteditable", "true");
+        cell.classList.add("editable");
+      });
+      exportBtn.style.display = "inline-block";
+    }
+
+    function exportJSON() {
+      const rows = tbody.querySelectorAll("tr");
+      const newData = [];
+      rows.forEach((row, i) => {
+        const cells = row.querySelectorAll("td");
+        newData.push({
+          rank: i + 1,
+          name: cells[1].innerText.trim(),
+          points: parseInt(cells[2].innerText.trim()),
+          lastUpdate: cells[3].innerText.trim(),
+        });
+      });
+      const json = JSON.stringify(newData, null, 2);
+      console.log(json);
+      prompt("Copy updated JSON:", json);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "/") {
+        const code = prompt("Enter Admin Code:");
+        if (code === "331137") enableAdminMode();
+      }
+    });
+
+    exportBtn.addEventListener("click", exportJSON);
+    loadData();
+  </script>
+</body>
+</html>
